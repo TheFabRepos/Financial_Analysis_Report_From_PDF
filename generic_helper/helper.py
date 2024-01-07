@@ -19,3 +19,21 @@ def create_tmp_directory(filename_only):
   os.makedirs(os.path.join(temp_directory, "json"), exist_ok=True)
 
   return temp_directory
+
+import json
+
+def extract_json_objects(string):
+  """Extracts all the JSON objects from a string and returns one object per JSON document.
+
+  Args:
+    string: The string to extract the JSON objects from.
+
+  Returns:
+    A list of JSON objects.
+  """
+
+  json_objects = []
+  for match in re.finditer(r'(\{.*?\})', string):
+    json_objects.append(json.loads(match.group(1)))
+
+  return json_objects

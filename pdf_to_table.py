@@ -1,6 +1,9 @@
 from vertexai.preview.generative_models import GenerativeModel, Part
 import pdf_engineering.table_pdf_to_img as pdf_engineering
 import generic_helper.helper as generic_helper
+
+import image_recognition.extract_info as extract_info_from_image
+
 import os
 import shutil
 
@@ -31,12 +34,18 @@ if __name__ == "__main__":
     filename_only = (pdf_file.name.split("/")[-1]).split(".")[0]
 
     # create temp local directory to work with images
-    temp_directory = generic_helper.create_tmp_directory (filename_only)
-    list_images = pdf_engineering.convert_pdf_page_with_table_to_image(list_page_table)
+    #temp_directory = generic_helper.create_tmp_directory (filename_only)
+    list_images = pdf_engineering.convert_pdf_page_with_table_to_image(pdf_file)
     
+    answer = extract_info_from_image.extract_json_from_table(list_images[96])
+
+    print(answer)
+
+
     # Save the images in the temp directory
-    for i in range(len(list_images)):
-      list_images[i].save("{}/images/page{}.jpg".format(temp_directory, i))
+    #for i in list_page_table:
+      # Save the images in the temp directory for debugging purpose
+      #list_images[i].save("{}/images/page{}.jpg".format(temp_directory, i))
 
 
 
