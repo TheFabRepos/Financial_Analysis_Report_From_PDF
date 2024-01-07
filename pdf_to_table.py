@@ -1,27 +1,26 @@
 from vertexai.preview.generative_models import GenerativeModel, Part
-import vertexai
+import pdf_engineering.table_pdf_to_img as pdf_engineering
+import generic_helper.helper as generic_helper
 import os
-import io
-import tempfile
-import fitz  # import package PyMuPDF
-import uuid
-import pdf_engineering
+import shutil
 
 from vertexai.preview.generative_models import GenerativeModel, Part
 from PIL import Image as PIL_Image
 from pdf2image import convert_from_path
-import pdf2image
-from google.cloud import storage
 
 
 
+
+
+    #for i in list_page_table:
+    #  images[i].save("{}/images/page{}.jpg".format(temp_directory, i))
+      
 
 
 if __name__ == "__main__":
 
   # Get the list of PDF file in a bucket folder (or the whole bucket if folder is a specific not provided)
-  list_pdf_files = pdf_engineering.list_pdf_files_in_GCS ("fabgoldendemo", "report")
-
+  list_pdf_files =pdf_engineering.list_pdf_files_in_GCS ("fabgoldendemo", "report")
 
   # Convert each PDF file to a list of images (but only the pages which contains a table)
   for pdf_file in list_pdf_files:
@@ -31,13 +30,15 @@ if __name__ == "__main__":
     #Extract the file name (without extension or folder name)
     filename_only = (pdf_file.name.split("/")[-1]).split(".")[0]
 
-    # crete temp local directory to work with images
-    temp_directory = pdf_engineering.create_tmp_directory (filename_only)
+    # create temp local directory to work with images
+    temp_directory = generic_helper.create_tmp_directory (filename_only)
+    list_images = pdf_engineering.convert_pdf_page_with_table_to_image(list_page_table)
+    
+    # Save the images in the temp directory
+    for i in range(len(list_images)):
+      list_images[i].save("{}/images/page{}.jpg".format(temp_directory, i))
 
 
-    images = pdf2image.convert_from_bytes(pdf_file.download_as_bytes())
-    for i in list_page_table:
-      images[i].save("{}/images/page{}.jpg".format(temp_directory, i))
 
 
   #shutil.rmtree(temp_directory)

@@ -1,16 +1,8 @@
-import os
-import io
-import tempfile
 import fitz  # import package PyMuPDF
-import uuid
-
 from vertexai.preview.generative_models import GenerativeModel, Part
 from PIL import Image as PIL_Image
-from pdf2image import convert_from_path
-import pdf2image
+from pdf2image import convert_from_bytes
 from google.cloud import storage
-
-
 
 def list_pdf_files_in_GCS(bucket_name, folder_name) -> list[storage.Blob]:
   """Lists all the PDF files in a specific folder of a Google Cloud Storage bucket.
@@ -67,20 +59,6 @@ def list_table_in_pdf(list_pdf_files:list[storage.Blob]) -> list[int]:
                    
   return page_list
   
-def create_tmp_directory(filename_only):
-  
-  """Creates a temporary which will be used to do local work (e.g., converting PDF to images, getting JSON data, etc.).
-
-  Args:
-    filename_only: The name of the PDF file without the extension.
-
-  Returns:
-    The path to the temporary directory.
-  """
-
-  temp_directory = "{}/tmp_{}_{}".format(os.getcwd(),filename_only,str(uuid.uuid4()))
-  os.makedirs(temp_directory, exist_ok=True)
-  os.makedirs(os.path.join(temp_directory, "images"), exist_ok=True)
-  os.makedirs(os.path.join(temp_directory, "json"), exist_ok=True)
-
-  return temp_directory
+def convert_pdf_page_with_table_to_image(pdf_file):
+    images = convert_from_bytes(pdf_file.download_as_bytes())
+    return images
