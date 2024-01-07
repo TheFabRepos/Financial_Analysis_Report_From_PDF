@@ -88,7 +88,7 @@ def list_table_in_pdf(list_pdf_files:list[storage.Blob]) -> list[int]:
   
 def create_tmp_directory(filename_only):
 
-  temp_directory = "{}/{}_{}_tmp".format(os.getcwd(),filename_only,str(uuid.uuid4()))
+  temp_directory = "{}/tmp_{}_{}".format(os.getcwd(),filename_only,str(uuid.uuid4()))
   os.makedirs(temp_directory, exist_ok=True)
   os.makedirs(os.path.join(temp_directory, "images"), exist_ok=True)
   os.makedirs(os.path.join(temp_directory, "json"), exist_ok=True)
