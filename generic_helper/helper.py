@@ -1,6 +1,7 @@
 import os
 import uuid
-
+import json
+import re
 
 def create_tmp_directory(filename_only):
   
@@ -20,20 +21,35 @@ def create_tmp_directory(filename_only):
 
   return temp_directory
 
-import json
 
-def extract_json_objects(string):
-  """Extracts all the JSON objects from a string and returns one object per JSON document.
+def replace_numbers_between_parentheses(json_string: str):
+  """Replaces numbers between parentheses with the same number with a negative sign.
 
   Args:
-    string: The string to extract the JSON objects from.
+    string: The string to search.
 
   Returns:
-    A list of JSON objects.
+    The string with the numbers between parentheses replaced.
   """
 
-  json_objects = []
-  for match in re.finditer(r'(\{.*?\})', string):
-    json_objects.append(json.loads(match.group(1)))
+  # Find all numbers between parentheses.
+  numbers = re.findall(r"\((\d+)\)", json_string)
 
-  return json_objects
+  # Replace each number with the same number with a negative sign.
+  for number in numbers:
+    json_string = json_string.replace("({})".format(number), f"-{number}")
+
+  return json_string
+
+def remove_backticks(json_string: str):
+  """Removes all backticks from a string.
+
+  Args:
+    json_string: The string to remove backticks from.
+
+  Returns:
+    The string with all backticks removed.
+  """
+  
+  json_string = json_string.replace("```", "")
+  return json_string

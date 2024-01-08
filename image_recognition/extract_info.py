@@ -9,6 +9,14 @@ import io
 #PIL.PpmImagePlugin.PpmImageFile
 
 def convert_ppm_to_vertexImage(ppm_image: PpmImageFile) -> Image:
+  """Converts a PPM image to a Vertex AI Image object.
+
+  Args:
+    ppm_image: The PPM image to convert.
+
+  Returns:
+    The Vertex AI Image object.
+  """
 
   imgByteArr = io.BytesIO()
   ppm_image.save(imgByteArr, format='JPEG')
@@ -19,6 +27,14 @@ def convert_ppm_to_vertexImage(ppm_image: PpmImageFile) -> Image:
 
 
 def extract_json_from_table(pdf_page_image: PpmImageFile) -> str:
+  """Extracts JSON from a PDF page image.
+
+  Args:
+    pdf_page_image: The PDF page image to extract JSON from.
+
+  Returns:
+    The extracted JSON as string
+  """
 
   final_response = ""
   multimodal_model = GenerativeModel ("gemini-pro-vision")

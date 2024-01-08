@@ -369,35 +369,69 @@ myString = """```json
 }
 ``` """
 
-def split_json_by_delimiter(string, delimiter):
-  """Splits a JSON string by a given delimiter and returns a list of JSON objects.
+def convert_string_to_json(string):
+    """Converts a string to a JSON object.
+
+    Args:
+        string: The string to convert to a JSON object.
+
+    Returns:
+        A JSON object.
+    """
+
+    json_object = json.loads(string)
+    return json_object
+
+def replace_numbers_between_parentheses(string):
+  """Replaces numbers between parentheses with the same number with a negative sign.
 
   Args:
-    string: The JSON string to split.
-    delimiter: The delimiter to split the string by.
+    string: The string to search.
 
   Returns:
-    A list of JSON objects.
+    The string with the numbers between parentheses replaced.
   """
 
-  json_objects = []
-  for match in re.finditer(r'(.*?{})'.format(delimiter), string):
-    json_objects.append(json.loads(match.group(1)))
+  # Find all numbers between parentheses.
+  #numbers = re.findall(r"\((.+?)\)", string)
+  numbers = re.findall(r"\((\d+)\)", string)
 
-  return json_objects
+  # Replace each number with the same number with a negative sign.
+  for number in numbers:
+
+    string = string.replace("({})".format(number), f"-{number}")
+
+  return string
+
 
 if __name__ == '__main__':
   
 
 # Read the JSON string from a file
 
-    print (myString)
-    search_expression ="{}(.+?){}".format("```json", "```") 
+    #print (myString)
+    #search_expression ="{}(.+?)".format("json") 
 
-    print (myString.find("json"))
-    print (myString.replace("```", ""))
+    #print (myString.find("json"))
+    #print (myString.replace("```", ""))
+
+    myString = myString.replace("```", "")
+    myString = replace_numbers_between_parentheses(myString)
+    answers = myString.split("json")
+
+    proper_list = [answer for answer in answers if len(answer) > 0]
+
+
+
+    for i, answer in enumerate(proper_list):
+        myJsonObj = convert_string_to_json(answer)
+        
+        print(i)
+        print(myJsonObj)
 
 
     #m = re.search(search_expression, myString)
 
-    #print(m)
+    #m = re.search('json(.+?)json', myString)
+
+    #print(m.group(1))
