@@ -22,7 +22,7 @@ def create_tmp_directory(filename_only):
   return temp_directory
 
 
-def replace_numbers_between_parentheses(json_string: str):
+def replace_numbers_between_parentheses(json_tables_string: str):
   """Replaces numbers between parentheses with the same number with a negative sign.
 
   Args:
@@ -33,15 +33,15 @@ def replace_numbers_between_parentheses(json_string: str):
   """
 
   # Find all numbers between parentheses.
-  numbers = re.findall(r"\((\d+)\)", json_string)
+  numbers = re.findall(r"\((\d+)\)", json_tables_string)
 
   # Replace each number with the same number with a negative sign.
   for number in numbers:
-    json_string = json_string.replace("({})".format(number), f"-{number}")
+    json_tables_string = json_tables_string.replace("({})".format(number), f"-{number}")
 
-  return json_string
+  return json_tables_string
 
-def remove_backticks(json_string: str):
+def remove_backticks(json_tables_string: str):
   """Removes all backticks from a string.
 
   Args:
@@ -50,6 +50,29 @@ def remove_backticks(json_string: str):
   Returns:
     The string with all backticks removed.
   """
-  
-  json_string = json_string.replace("```", "")
-  return json_string
+  #json_tables_string = (json_tables_string.encode('ascii', 'ignore')).decode("utf-8")
+  json_tables_string = json_tables_string.replace("```", "")
+  #json_tables_string = json_tables_string.replace("\\u00A0", "")
+  #json_tables_string = json_tables_string.replace("\u2020", "")
+  return json_tables_string
+
+def convert_string_to_json(json_tables_string) :
+    """Converts a string with multiple JSON docuemnt to a JSON object.
+
+    Args:
+        string: The string to convert to JSON objects.
+
+    Returns:
+        A list of JSON object.
+    """
+    list_json_object = []
+    list_json_docs = json_tables_string.split("json")
+
+    # Here we use a heuristic to avoit meaningless JSON object
+    list_json_docs_no_empty = [json_doc for json_doc in list_json_docs if len(json_doc) > 10]
+
+    for json_doc in list_json_docs_no_empty:
+        json_object = json.loads(json_doc)
+        list_json_object.append(json_object)
+
+    return list_json_object

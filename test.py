@@ -393,12 +393,10 @@ def replace_numbers_between_parentheses(string):
   """
 
   # Find all numbers between parentheses.
-  #numbers = re.findall(r"\((.+?)\)", string)
   numbers = re.findall(r"\((\d+)\)", string)
 
   # Replace each number with the same number with a negative sign.
   for number in numbers:
-
     string = string.replace("({})".format(number), f"-{number}")
 
   return string
