@@ -4,7 +4,7 @@ import generic_helper.helper as generic_helper
 
 import image_recognition.extract_info as extract_info
 
-import os
+import json
 import shutil
 
 from vertexai.preview.generative_models import GenerativeModel, Part
@@ -28,40 +28,48 @@ if __name__ == "__main__":
   # Convert each PDF file to a list of images (but only the pages which contains a table)
   for pdf_file in list_pdf_files:
     #Identify the page with table(s) in the current processed PDF file
-    list_page_table = pdf_engineering.list_table_in_pdf(list_pdf_files)
+    list_page_table = pdf_engineering.list_table_in_pdf(pdf_file)
 
     #Extract the file name (with extension but without folder name)
     filename_with_extension = (pdf_file.name.split("/")[-1])
     #Extract the file name (without extension or folder name)
     filename_only = (pdf_file.name.split("/")[-1]).split(".")[0]
     
-    # create temp local directory to work with images
-    #temp_directory = generic_helper.create_tmp_directory (filename_only)
+    # create temp local directory to store teh resulting json file
+    temp_directory = generic_helper.create_tmp_directory (filename_only)
+    
     list_images = pdf_engineering.convert_pdf_page_with_table_to_image(pdf_file)
     
+    # For testing purpose
+    #list_page_table = [9,93,114,117]
+    #list_page_table = [57]
 
-    #Do for every list item
-    page=96
-    #i=93
-    json_tables_string = extract_info.extract_json_from_table(list_images[page])
+    #Do for every page in the pdf file
+    for page in list_page_table:
+      json_tables_string:str = extract_info.extract_json_from_table(list_images[page])
 
-    # Do string cleanup before converting to JSON object
-    # Remove backtick if it exists because Python does not like it
-    json_tables_string = generic_helper.remove_backticks(json_tables_string)
+      # Do string cleanup before converting to JSON object
+      # Remove backtick if it exists because Python does not like it
+      json_tables_string:str = generic_helper.remove_backticks(json_tables_string)
 
-    # Replace rounded parentheses with minus symbol for negative numbers because JSON does not like it
-    json_tables_string = generic_helper.replace_numbers_between_parentheses(json_tables_string)
+      list_json_doc:str = generic_helper.get_list_json_doc(json_tables_string)
 
-    # 
-    list_json_oject_table = generic_helper.convert_string_to_json (json_tables_string)
-    
-    for table_number, json_object in enumerate(list_json_oject_table):
-      description = extract_info.description_from_json(json_object)
-      json_object['description'] = description
-      json_object['source'] = "{}_page_{}_table_{}".format(filename_with_extension,page,table_number+1)
-      print(json_object)
+      # Replace rounded parentheses with minus symbol for negative numbers because JSON does not like it
+      #json_tables_string = generic_helper.replace_numbers_between_parentheses(json_tables_string)
 
-      print(description)
+      filename_with_extension, filename_only = generic_helper.extract_filename (pdf_file.name)
+
+      # Convert the string to a JSON object
+      #list_json_oject_table = generic_helper.convert_string_to_json (page, json_tables_string)
+      
+      for table_number, json_doc  in enumerate(list_json_doc):
+        description:str = extract_info.description_from_json(json_doc)
+        source:str = "{}_page_{}_table_{}".format(filename_with_extension,page,table_number+1)
+        json_doc = generic_helper.insert_string_in_json_doc(json_doc, description, source)
+        # Save the JSON file
+        with open("{}/json/{}_page{}_table{}.jsonl".format(temp_directory, filename_with_extension, page, table_number+1), "w") as fp:
+          json.dump(json_doc, fp)
+        
 
 
 

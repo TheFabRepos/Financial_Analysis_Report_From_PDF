@@ -38,7 +38,7 @@ def load_image(image_path):
   return image
 
 
-def list_table_in_pdf(list_pdf_files:list[storage.Blob]) -> list[int]:
+def list_table_in_pdf(pdf_file:storage.Blob) -> list[int]:
   """Lists all the tables in a PDF file.
 
   Args:
@@ -50,12 +50,11 @@ def list_table_in_pdf(list_pdf_files:list[storage.Blob]) -> list[int]:
 
   page_list = []
 
-  for pdf_file in list_pdf_files:
-    doc = fitz.open("pdf", pdf_file.download_as_bytes())
-    for page in doc:
-      tabs = page.find_tables()
-      if len(tabs.tables) > 0:
-        page_list.append(page.number) #index start at 0
+  doc = fitz.open("pdf", pdf_file.download_as_bytes())
+  for page in doc:
+    tabs = page.find_tables()
+    if len(tabs.tables) > 0:
+      page_list.append(page.number) #index start at 0
                    
   return page_list
   

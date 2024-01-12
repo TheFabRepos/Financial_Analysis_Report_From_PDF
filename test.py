@@ -405,6 +405,24 @@ def replace_numbers_between_parentheses(string):
 if __name__ == '__main__':
   
 
+  prompt = ["""Extract every table from top to bottom as it appears in the image and generate one JSON document per table discovered with all the information about the date (month, year,...) for this data, all the columns and rows faithfully represented as well as the headers. 
+              Consistency of the format is key and the output format should always be as followed: every single table will have a JSON Document starting only with '```json' and end '```'""",
+  """Extract every table from top to bottom as it appears in the image and generate one JSON document per table discovered with all the information about the date (month, year,...) for this data."""]
+  
+  test = False
+
+  print(int(test))
+
+
+  contents_restrictive = [
+      prompt[0]
+  ]
+
+  contents_restrictive = [
+      prompt[1]
+  ]
+
+
 # Read the JSON string from a file
 
     #print (myString)
@@ -413,19 +431,19 @@ if __name__ == '__main__':
     #print (myString.find("json"))
     #print (myString.replace("```", ""))
 
-    myString = myString.replace("```", "")
-    myString = replace_numbers_between_parentheses(myString)
-    answers = myString.split("json")
+    # myString = myString.replace("```", "")
+    # myString = replace_numbers_between_parentheses(myString)
+    # answers = myString.split("json")
 
-    proper_list = [answer for answer in answers if len(answer) > 0]
+    # proper_list = [answer for answer in answers if len(answer) > 0]
 
 
 
-    for i, answer in enumerate(proper_list):
-        myJsonObj = convert_string_to_json(answer)
+    # for i, answer in enumerate(proper_list):
+    #     myJsonObj = convert_string_to_json(answer)
         
-        print(i)
-        print(myJsonObj)
+    #     print(i)
+    #     print(myJsonObj)
 
 
     #m = re.search(search_expression, myString)

@@ -10,6 +10,13 @@ pdf2image = "*"
 poppler-utils = "*"
 "google.cloud" = "*"
 pymupdf = "*"
+langchain = "*"
+langchain-google-vertexai = "*"
+google-cloud-bigquery = "*"
+streamlit = "*"
+pgvector = "*"
+psycopg2-binary = "*"
+tiktoken = "*"
 
 [dev-packages]
 
