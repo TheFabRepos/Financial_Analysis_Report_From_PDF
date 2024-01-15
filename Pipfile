@@ -17,6 +17,7 @@ streamlit = "*"
 pgvector = "*"
 psycopg2-binary = "*"
 tiktoken = "*"
+cloud-sql-python-connector = {extras = ["pg8000"], version = "*"}
 
 [dev-packages]
 

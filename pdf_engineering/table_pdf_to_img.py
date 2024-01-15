@@ -61,3 +61,55 @@ def list_table_in_pdf(pdf_file:storage.Blob) -> list[int]:
 def convert_pdf_page_with_table_to_image(pdf_file):
     images = convert_from_bytes(pdf_file.download_as_bytes())
     return images
+
+
+def list_table_in_pdf(pdf_file:storage.Blob) -> list[int]:
+  """Lists all the tables in a PDF file.
+
+  Args:
+    pdf_file: The PDF file to list the tables from.
+
+  Returns:
+    A list of the tables in the PDF file.
+  """
+
+  page_list = []
+
+  doc = fitz.open("pdf", pdf_file.download_as_bytes())
+  for page in doc:
+    tabs = page.find_tables()
+    if len(tabs.tables) > 0:
+      page_list.append(page.number) #index start at 0
+                   
+  return page_list
+
+
+def list_table_in_pdf_from_file(pdf_file_path:str) -> list[int]:
+  """Lists all the tables in a PDF file.
+
+  Args:
+    pdf_file: The PDF file to list the tables from.
+
+  Returns:
+    A list of the tables in the PDF file.
+  """
+  pdf_file_bytes: bytes = None
+  with open(pdf_file_path, "rb") as f:
+      pdf_file_bytes = f.read()
+
+  page_list = []
+
+  doc = fitz.open("pdf", pdf_file_bytes)
+  for page in doc:
+    tabs = page.find_tables()
+    if len(tabs.tables) > 0:
+      page_list.append(page.number) #index start at 0
+                   
+  return page_list
+
+def convert_pdf_page_with_table_to_image_from_file(pdf_file_path:str):
+    pdf_file_bytes: bytes = None
+    with open(pdf_file_path, "rb") as f:
+      pdf_file_bytes = f.read()
+    images = convert_from_bytes(pdf_file_bytes)
+    return images
