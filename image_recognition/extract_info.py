@@ -5,6 +5,9 @@ from vertexai.preview.generative_models import GenerativeModel, Image, Part
 from  PIL.PpmImagePlugin import PpmImageFile
 import io
 import os
+import google.api_core.exceptions as google_exceptions
+from ratelimit import limits, RateLimitException, sleep_and_retry
+from backoff import on_exception, expo
 
 #from PIL.PpmImagePlugin import PpmImageFile
 
@@ -26,7 +29,6 @@ def convert_ppm_to_vertexImage(ppm_image: PpmImageFile) -> Image:
   ppm_image = Image.from_bytes(imgByteArr)
   return ppm_image
   
-
 def extract_json_from_table(pdf_page_image: PpmImageFile) -> str:
   """Extracts JSON from a PDF page image.
 
@@ -40,6 +42,7 @@ def extract_json_from_table(pdf_page_image: PpmImageFile) -> str:
     #Initilize variables
   final_response:str = ""
   multimodal_model = GenerativeModel ("gemini-pro-vision")
+  text_model = TextGenerationModel.from_pretrained("text-bison")
 
   #pdf_page_image = Image.load_from_file("tmp_2022-alphabet-annual-report_5e2355d1-af95-467a-97f6-1741a10e9217/images/page96.jpg")
   pdf_page_image = convert_ppm_to_vertexImage (pdf_page_image)
@@ -47,12 +50,12 @@ def extract_json_from_table(pdf_page_image: PpmImageFile) -> str:
   # We try first restrictive prompt (because we whave better quality answer) If no output, then we will go with less restrictive prompt
   restrictive_prompt = True
   #prompt = "Extract every table from top to bottom as it appears in the image and generate one JSON document per table discovered with all the information about the date (month, year,...) for this data, all the columns and rows faithfully represented as well as the headers."
-  prompt = ["""Extract every table from top to bottom as it appears in the image and generate one JSON document per table discovered with all the information about the date (month, year,...) for this data.""","""Extract every table from top to bottom as it appears in the image and generate one JSON document per table discovered with all the information about the date (month, year,...) for this data, all the columns and rows faithfully represented as well as the headers. 
+  multimodal_prompt = ["""Extract every table from top to bottom as it appears in the image and generate one JSON document per table discovered with all the information about the date (month, year,...) for this data.""","""Extract every table from top to bottom as it appears in the image and generate one JSON document per table discovered with all the information about the date (month, year,...) for this data, all the columns and rows faithfully represented as well as the headers. 
               Consistency of the format is key and the output format should always be as followed: every single table will have a JSON Document starting only with '```json' and end '```'""" ]
   
   contents = [
       pdf_page_image,
-      prompt[int(restrictive_prompt)],
+      multimodal_prompt[int(restrictive_prompt)],
   ]
 
   # We test first with restrictive prompt then with relax prompt if no answers with restrictive prompt.
@@ -96,7 +99,48 @@ def extract_json_from_table(pdf_page_image: PpmImageFile) -> str:
        return final_response
 
 
-def description_from_json(json_string: str) -> str:
+
+@sleep_and_retry # If there are more request to this function than rate, sleep shortly
+@on_exception(expo, google_exceptions.ResourceExhausted, max_tries=10) # if we receive exceptions from Google API, retry
+@limits(calls=60, period=60)
+def json_from_table_image_geminivision(multimodal_model:GenerativeModel, pdf_page_image: PpmImageFile, restrictive_prompt:bool ) -> str:
+
+  multimodal_prompt = ["""Extract every table from top to bottom as it appears in the image and generate one JSON document per table discovered with all the information about the date (month, year,...) for this data.""","""Extract every table from top to bottom as it appears in the image and generate one JSON document per table discovered with all the information about the date (month, year,...) for this data, all the columns and rows faithfully represented as well as the headers. 
+              Consistency of the format is key and the output format should always be as followed: every single table will have a JSON Document starting only with '```json' and end '```'""" ]
+  
+  contents = [
+      pdf_page_image,
+      multimodal_prompt[int(restrictive_prompt)],
+  ]
+  responses = multimodal_model.generate_content(
+      contents,  
+      generation_config={
+        "max_output_tokens": 2048,
+        "temperature": 0,
+        "top_p": 1,
+        "top_k": 1
+        },
+    stream=True)
+  
+  responses = list(responses)
+  if len(responses) > 0:
+    for response in responses:
+        final_response = final_response + response.candidates[0].content.parts[0].text
+    return final_response    
+  else:
+    return ''
+  
+
+
+
+
+
+
+# rate is 1 QPS.
+@sleep_and_retry # If there are more request to this function than rate, sleep shortly
+@on_exception(expo, google_exceptions.ResourceExhausted, max_tries=10) # if we receive exceptions from Google API, retry
+@limits(calls=60, period=60)
+def description_from_json_bison(json_string: str, model:TextGenerationModel) -> str:
 
   LOCATION=os.getenv('LOCATION')
   PROJECT=os.getenv('PROJECT_ID')
