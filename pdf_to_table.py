@@ -63,7 +63,7 @@ if __name__ == "__main__":
       #list_json_oject_table = generic_helper.convert_string_to_json (page, json_tables_string)
       
       for table_number, json_doc  in enumerate(list_json_doc):
-        description:str = extract_info.description_from_json(json_doc)
+        description:str = extract_info.description_from_json_bison(json_doc)
         source:str = "{}_page_{}_table_{}".format(filename_with_extension,page,table_number+1)
         json_doc = generic_helper.insert_string_in_json_doc(json_doc, description, source)
         # Save the JSON file

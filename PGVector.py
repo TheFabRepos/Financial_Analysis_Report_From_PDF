@@ -9,7 +9,7 @@ from google.cloud.sql.connector import Connector, IPTypes
 import pg8000
 import sqlalchemy
 
-
+from embedding_helper import pgvector_embedding
 
 PROJECT_ID = os.getenv("PROJECT_ID")
 PGVECTOR_HOST=os.getenv("PGVECTOR_HOST")
@@ -126,31 +126,33 @@ def connect_with_connector() -> sqlalchemy.engine.base.Engine:
 
 if __name__ == "__main__":
 
-    engine:sqlalchemy.engine.base.Engine = connect_with_connector()
+    pgvector_embedding.embed_file_in_path("tmp_2022-alphabet-annual-report_ffbe43c7-9b2a-4409-b87c-d9774d4b8634/json", "Google_2022")
+
+#     engine:sqlalchemy.engine.base.Engine = connect_with_connector()
     
-    with engine.connect() as db_conn:
-        # insert into database
-        # query database
-        #result = db_conn.execute(sqlalchemy.text("SELECT name from langchain_pg_collection")).fetchall()
-        result = db_conn.execute(sqlalchemy.text("SELECT name from langchain_pg_collection")).fetchall()
+#     with engine.connect() as db_conn:
+#         # insert into database
+#         # query database
+#         #result = db_conn.execute(sqlalchemy.text("SELECT name from langchain_pg_collection")).fetchall()
+#         result = db_conn.execute(sqlalchemy.text("SELECT name from langchain_pg_collection")).fetchall()
 
 
 
 
 
-        # commit transaction (SQLAlchemy v2.X.X is commit as you go)
-        db_conn.commit()
+#         # commit transaction (SQLAlchemy v2.X.X is commit as you go)
+#         db_conn.commit()
 
-        # Do something with the results
+#         # Do something with the results
 
-        name_list = [r.name for r in result]
+#         name_list = [r.name for r in result]
 
-        print(name_list)
+#         print(name_list)
 
-#        for r in result:
-#            print(r.name)
+# #        for r in result:
+# #            print(r.name)
 
-    input("Press Enter to continue...")
+#     input("Press Enter to continue...")
 
 
 

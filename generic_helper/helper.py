@@ -92,7 +92,7 @@ def insert_string_in_json_doc(json_doc:str, description:str, source:str) -> str:
   return json_doc
  
 
-
+# We don't use this function as the JSON returned is not always well formed (but good enough to do analysis)
 def convert_string_to_json(page, json_tables_string) -> str:
     """Converts a string with multiple JSON docuemnt to a JSON object.
 

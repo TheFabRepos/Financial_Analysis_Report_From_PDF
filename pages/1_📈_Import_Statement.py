@@ -1,90 +1,59 @@
 import streamlit as st
 
-from vertexai.preview.generative_models import GenerativeModel, Part
 import pdf_engineering.table_pdf_to_img as pdf_engineering
 import generic_helper.helper as generic_helper
 
 import image_recognition.extract_info as extract_info
 
 import json
-import shutil
+from embedding_helper import pgvector_embedding
 
-from vertexai.preview.generative_models import GenerativeModel, Part
-from PIL import Image as PIL_Image
-from pdf2image import convert_from_path
+
+
 
 
 
 
 def process_file():
-    progressbar = st.progress(25, text = "Listing tables in PDF file...")
-    #Find all thepage which got at least one table
-    list_page_table = pdf_engineering.list_table_in_pdf_from_file(f"{st.session_state.temp_directory}/{st.session_state.filename_with_extension}")
     logtxtbox = st.empty()
-    logtxtbox.caption(f"{len(list_page_table)} pages containing tables found in {st.session_state.filename_with_extension}...") 
-    #Convert the whole pdf file in images
-    progressbar.progress(50, text = "Converting PDF file to images...")
-    list_images = pdf_engineering.convert_pdf_page_with_table_to_image_from_file(f"{st.session_state.temp_directory}/{st.session_state.filename_with_extension}")
+    logtxtbox.write("") 
+    progressbar = st.progress(0, text = "")
+
+    with st.spinner(text = "Finding page(s) with table(s)..."):
+    #Find all thepage which got at least one table
+      list_page_table = pdf_engineering.list_table_in_pdf_from_file(f"{st.session_state.temp_directory}/{st.session_state.filename_with_extension}")
+      logtxtbox.write(f"##### {len(list_page_table)} pages containing tables found in {st.session_state.filename_with_extension}...") 
+    progressbar = progressbar.progress(0.25, text = "Page containing tables in PDF file have been found...")
+
+    with st.spinner(text = "Converting pages in PDF files to images..."):
+      list_images = pdf_engineering.convert_pdf_page_with_table_to_image_from_file(f"{st.session_state.temp_directory}/{st.session_state.filename_with_extension}")
+    progressbar.progress(0.5, text = "Pages in PDF file has been converted to images ...")
     
     #Do for every page in the pdf file
 
-    progressbar.progress(75, text = f"Extracting JSON from tables")
-
+    # ToDo : Logic has to be moved in one of the python module
     for count, page in enumerate(list_page_table):
       json_tables_string:str = extract_info.extract_json_from_table(list_images[page])
-
       # Do string cleanup before converting to JSON object
       # Remove backtick if it exists because Python does not like it
       json_tables_string:str = generic_helper.remove_backticks(json_tables_string)
-
       list_json_doc:str = generic_helper.get_list_json_doc(json_tables_string)
 
-      # Replace rounded parentheses with minus symbol for negative numbers becauextracted jsonse JSON does not like it
-      #json_tables_string = generic_helper.replace_numbers_between_parentheses(json_tables_string)
-
-      #filename_with_extension, filename_only = generic_helper.extract_filename (pdf_file.name)
-
-      # Convert the string to a JSON object
-      #list_json_oject_table = generic_helper.convert_string_to_json (page, json_tables_string)
-      
-
-      
       for table_number, json_doc  in enumerate(list_json_doc):
-
-
-        description:str = extract_info.description_from_json(json_doc)
+        description:str = extract_info.description_from_json_bison(json_doc)
         source:str = "{}_page_{}_table_{}".format(st.session_state.filename_with_extension,page,table_number+1)
         json_doc = generic_helper.insert_string_in_json_doc(json_doc, description, source)
         # Save the JSON file
         with open("{}/json/{}_page{}_table{}.jsonl".format(st.session_state.temp_directory, st.session_state.filename_with_extension, page, table_number+1), "w") as fp:
           json.dump(json_doc, fp)
-      
-      
-      logtxtbox.caption(f"""{len(list_page_table)} pages containing tables found in {st.session_state.filename_with_extension}... {count+1} processed out of {len(list_page_table)}""") 
+            
+      logtxtbox.text(f"""{len(list_page_table)} pages containing tables found in {st.session_state.filename_with_extension}... {count+1} pages processed out of {len(list_page_table)} \n
+      Note: a page can contain more than one table""") 
   
-    progressbar.progress(100, text = f"Embedding extracted json...")
-    
-
-
-    # for page in list_page_table:
-    #   json_tables_string:str = extract_info.extract_json_from_table(list_images[page])
-
-    #   # Do string cleanup before converting to JSON object
-    #   # Remove backtick if it exists because Python does not like it
-    #   json_tables_string:str = generic_helper.remove_backticks(json_tables_string)
-    #   list_images = pdf_engineering.
-
-
-
-
-     #titleProgressImage.write ("Listing tables in PDF file...")
-
-
-
-
-
-
-
+    progressbar.progress(0.75, text = f"JSON has been extracted from tables")
+    st.spinner(text = "Embedding extracted json...")
+    pgvector_embedding (f"{st.session_state.temp_directory}/json", st.session_state.collection_name)
+    progressbar.progress(1, text = f"JSON has been embedded...")
 
 
 st.write("# Import statement for analysis")
@@ -97,6 +66,7 @@ if 'uploaded_already' not in st.session_state:
          st.session_state.uploaded_already = False
          st.session_state.filename_with_extension = ""
          st.session_state.temp_directory = ""
+         st.session_state.collection_name = ""
 
 uploaded_file:str = file_uploader.file_uploader("Choose a PDF file", accept_multiple_files=False, type=['pdf'], key='uploader_key')
 
@@ -125,6 +95,8 @@ if st.session_state.uploaded_already == False:
 if st.session_state.uploaded_already == True:
     file_uploader.empty()
     st.write(f"File {st.session_state.filename_with_extension} uploaded successfully...")
+    collection_name = st.text_input("Enter the name of the collection.")
+    st.session_state["collection_name"] = collection_name
     st.button("Ready to process 📝...", on_click=process_file)
 
 
