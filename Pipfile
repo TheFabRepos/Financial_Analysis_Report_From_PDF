@@ -9,7 +9,6 @@ pillow = "*"
 pdf2image = "*"
 poppler-utils = "*"
 "google.cloud" = "*"
-pymupdf = "*"
 langchain = "*"
 langchain-google-vertexai = "*"
 google-cloud-bigquery = "*"
@@ -20,6 +19,8 @@ tiktoken = "*"
 cloud-sql-python-connector = {extras = ["pg8000"], version = "*"}
 ratelimit = "*"
 backoff = "*"
+pymupdf = "==1.23.12"
+retry = "*"
 
 [dev-packages]
 

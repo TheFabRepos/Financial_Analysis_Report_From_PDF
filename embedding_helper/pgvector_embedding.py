@@ -45,7 +45,7 @@ def embed_file_in_path(file_path:str, collection_name:str):
         #store.add_documents(docs)
     #except:
     #    print ('error')
-    input ('Press Enter to continue...')
+    #input ('Press Enter to continue...')
 
 
 @sleep_and_retry # If there are more request to this function than rate, sleep shortly

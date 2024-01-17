@@ -104,6 +104,7 @@ def list_table_in_pdf_from_file(pdf_file_path:str) -> list[int]:
     tabs = page.find_tables()
     if len(tabs.tables) > 0:
       page_list.append(page.number) #index start at 0
+  
                    
   return page_list
 
