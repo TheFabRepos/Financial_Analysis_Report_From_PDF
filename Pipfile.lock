@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "35adc18d408555f03b7d72eb2661e125d9b45887113c31a7d3cd6533837ed25b"
+            "sha256": "18b40319bcc2813e635508900a5062ea986ec3c72b0de4f96e1fb76f65d45f97"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -853,11 +853,11 @@
         },
         "jsonschema": {
             "hashes": [
-                "sha256:4f614fd46d8d61258610998997743ec5492a648b33cf478c1ddc23ed4598a5fa",
-                "sha256:ed6231f0429ecf966f5bc8dfef245998220549cbbcf140f913b7464c52c3b6b3"
+                "sha256:3ba18e27f7491ea4a1b22edce00fb820eec968d397feb3f9cb61d5894bb38167",
+                "sha256:70a09719d375c0a2874571b363c8a24be7df8071b80c9aa76bc4551e7297c63c"
             ],
             "markers": "python_version >= '3.8'",
-            "version": "==4.20.0"
+            "version": "==4.21.0"
         },
         "jsonschema-specifications": {
             "hashes": [
@@ -869,28 +869,28 @@
         },
         "langchain": {
             "hashes": [
-                "sha256:8652e74b039333a55c79faff4400b077ba1bd0ddce5255574e42d301c05c1733",
-                "sha256:d43119f8d3fda2c8ddf8c3a19bd5b94b347e27d1867ff14a921b90bdbed0668a"
+                "sha256:3f1dcf458bbd603447e93ece99fe6611b1fafa16dc67464b1c8091dd475242f9",
+                "sha256:a9616544b78ccf1a5b286fae7926e00beea6dc5b8fda983e5180313fefd3dfab"
             ],
             "index": "pypi",
             "markers": "python_version < '4.0' and python_full_version >= '3.8.1'",
-            "version": "==0.1.0"
+            "version": "==0.1.1"
         },
         "langchain-community": {
             "hashes": [
-                "sha256:13b988afaa24e570d2b9992aecccb2fe36d9c33feafd9804f3066dc2ff042d4d",
-                "sha256:7cfe36c52b1fb86c1095d4dec0cf466a1c752a7446104e8b39cf0f70512a4851"
+                "sha256:655196e446e7f37f4882221b6f3f791d6add28ea596d521ccf6f4507386b9a13",
+                "sha256:cf66c6ff7fcbeb582f5e88ee00decea7fdeca5ccddda725046f28efc697c41a7"
             ],
             "markers": "python_version < '4.0' and python_full_version >= '3.8.1'",
-            "version": "==0.0.12"
+            "version": "==0.0.13"
         },
         "langchain-core": {
             "hashes": [
-                "sha256:3c9e1383264c102fcc6f865700dbb9416c4931a25d0ac2195f6311c6b867aa17",
-                "sha256:d89952f6d0766cfc88d9f1e25b84d56f8d7bd63a45ad8ec1a9a038c9b49df16d"
+                "sha256:4ad4b596dbfdbc8393c96d40983b97aec165ab0ba66430beae73e3d879c13a0d",
+                "sha256:69bd66e8604863b0eb1fe4fcd05507be52fdd937dd0849d42eaae80141982e6d"
             ],
             "markers": "python_version < '4.0' and python_full_version >= '3.8.1'",
-            "version": "==0.1.10"
+            "version": "==0.1.11"
         },
         "langchain-google-vertexai": {
             "hashes": [
@@ -903,11 +903,11 @@
         },
         "langsmith": {
             "hashes": [
-                "sha256:6d22ee07eb41c65b3f5166b20041a026714952497d9e80d5be6879d3a5c14d84",
-                "sha256:dee1c6ef9e8241b82a8851926624269954d0ff8e22d82e32e73455f387f4e245"
+                "sha256:5838e5a4bb1939e9794eb3f802f7c390247a847bd603e31442be5be00068e504",
+                "sha256:eb816ad456776ec4c6005ddce8a4c315a1a582ed4d079979888e9f8a1db209b3"
             ],
             "markers": "python_version < '4.0' and python_full_version >= '3.8.1'",
-            "version": "==0.0.80"
+            "version": "==0.0.81"
         },
         "markdown-it-py": {
             "hashes": [
@@ -2100,6 +2100,15 @@
             "index": "pypi",
             "markers": "python_version >= '3.8' and python_full_version != '3.9.7'",
             "version": "==1.30.0"
+        },
+        "streamlit-js-eval": {
+            "hashes": [
+                "sha256:3fa9502d6895057aaf8922edadfa1659a764b5b01da5dfe7fdd52eeac32658c0",
+                "sha256:86f092497d1254fd5820bcc3e389a35e9dc638684398a8fa945d0d0b9034fa4a"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.8'",
+            "version": "==0.1.5"
         },
         "tenacity": {
             "hashes": [

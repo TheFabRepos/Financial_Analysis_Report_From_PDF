@@ -9,6 +9,7 @@ st.set_page_config(
     page_icon="📄",
 )
 
+@st.cache_resource
 def connect_with_connector() -> sqlalchemy.engine.base.Engine:
     """
     Initializes a connection pool for a Cloud SQL instance of Postgres.
@@ -66,7 +67,7 @@ def get_list_collectiom() -> list[str]:
 
 st.header("Chat with your financial statement")
 st.subheader("Please select one collection:")
-st.sidebar.success("Select a demo above.")
+
 
 options = get_list_collectiom()
 choice = st.radio("", options)

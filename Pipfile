@@ -21,6 +21,7 @@ ratelimit = "*"
 backoff = "*"
 pymupdf = "==1.23.12"
 retry = "*"
+streamlit-js-eval = "*"
 
 [dev-packages]
 
