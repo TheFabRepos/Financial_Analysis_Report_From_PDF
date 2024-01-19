@@ -1,5 +1,4 @@
 from langchain_google_vertexai import VertexAIEmbeddings
-from langchain.vectorstores.utils import DistanceStrategy
 import os
 from langchain_community.vectorstores.pgvector import PGVector
 from langchain.docstore.document import Document
@@ -33,7 +32,7 @@ def embed_file_in_path(file_path:str, collection_name:str):
         pre_delete_collection = True
     )
 
-    store.as_retriever()
+    #store.as_retriever()
 
     #try:
     for i, file in enumerate(dir_list):

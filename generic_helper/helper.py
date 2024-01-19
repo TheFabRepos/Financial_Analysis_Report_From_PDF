@@ -3,7 +3,6 @@ import uuid
 import json
 import re
 import json
-import logging
 
 def is_json(myjson):
   try:

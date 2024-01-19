@@ -32,22 +32,6 @@ def process_file():
      extract_info.extract_json_from_table_with_iteration (list_page_table, list_images, st.session_state.temp_directory, st.session_state.filename_with_extension, logtxtbox)
     progressbar.progress(0.75, text = "JSON extracted from tables found in PDF file...")
 
-    # # ToDo : Logic has to be moved in one of the python module
-    # for count, page in enumerate(list_page_table):
-    #   json_tables_string:str = extract_info.extract_json_from_table(list_images[page])
-    #   # Do string cleanup before converting to JSON object
-    #   # Remove backtick if it exists because Python does not like itf
-    #   json_tables_string:str = generic_helper.remove_backticks(json_tables_string)
-    #   list_json_doc:list[str] = generic_helper.get_list_json_doc(json_tables_string)
-
-    #   for table_number, json_doc  in enumerate(list_json_doc):
-    #     description:str = extract_info.description_from_json_bison(json_doc)
-    #     source:str = "{}_page_{}_table_{}".format(st.session_state.filename_with_extension,page,table_number+1)
-    #     json_doc = generic_helper.insert_string_in_json_doc(json_doc, description, source)
-    #     # Save the JSON file
-    #     with open("{}/json/{}_page{}_table{}.jsonl".format(st.session_state.temp_directory, st.session_state.filename_with_extension, page, table_number+1), "w") as fp:
-    #       json.dump(json_doc, fp)
-              
     with st.spinner(text = "Embedding extracted json..."):
       pgvector_embedding.embed_file_in_path (f"{st.session_state.temp_directory}/json", st.session_state.collection_name)
     progressbar.progress(0.999, text = f"JSON has been embedded...")

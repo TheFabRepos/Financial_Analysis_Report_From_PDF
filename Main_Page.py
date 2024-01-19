@@ -70,6 +70,6 @@ st.subheader("Please select one collection:")
 
 
 options = get_list_collectiom()
-choice = st.radio("", options)
+st.session_state.choice_collection = st.radio("", options)
 
-st.text_input("Your choice:", value=choice, disabled=True)
+st.text_input("Your choice:", value=st.session_state.choice_collection, disabled=True)
