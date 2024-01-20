@@ -16,10 +16,11 @@ def create_sources_string(source_urls: Set[str]) -> str:
         sources_string += f"{i+1}. {source}\n"
     return sources_string
 
-pgvector_retrieval = rag_pgvector.PG_Vector_RAG(collection_name=st.session_state.choice_collection)
+#pgvector_retrieval = rag_pgvector.PG_Vector_RAG(collection_name=st.session_state.choice_collection)
+pgvector_retrieval = rag_pgvector.PG_Vector_RAG(collection_name="Google_2022")
 
 
-st.header("LangChain🦜🔗 Udemy Course- Helper Bot")
+st.header("Chat with your statement 💰 - Helper Bot")
 if (
     "chat_answers_history" not in st.session_state
     and "user_prompt_history" not in st.session_state
@@ -30,24 +31,23 @@ if (
     st.session_state["chat_history"] = []
 
 
-prompt = st.text_input("Prompt", placeholder="Enter your message here...") or st.button(
-    "Submit"
-)
+prompt = st.text_input("Prompt", placeholder="Enter your message here...") or st.button("Submit")
 
 if prompt:
     with st.spinner("Generating response..."):
         generated_response = rag_pgvector.run_llm(
-            query=prompt, chat_history=st.session_state["chat_history"]
-        )
+                pgvector_retrieval = pgvector_retrieval,
+                query=prompt, chat_history=st.session_state["chat_history"]
+                )
 
         sources = set(
-            [doc.metadata["source"] for doc in generated_response["source_documents"]]
+            [os.path.basename(doc.metadata["source"]) for doc in generated_response["source_documents"]]
         )
         formatted_response = (
-            f"{generated_response['answer']} \n\n {create_sources_string(sources)}"
+            f"{generated_response['result']} \n {create_sources_string(sources)}"
         )
 
-        st.session_state.chat_history.append((prompt, generated_response["answer"]))
+        st.session_state.chat_history.append((prompt, generated_response["result"]))
         st.session_state.user_prompt_history.append(prompt)
         st.session_state.chat_answers_history.append(formatted_response)
 

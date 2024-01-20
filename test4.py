@@ -11,8 +11,6 @@ COLLECTION_NAME = "Google_2022"
 
 pgvector_retrieval = PG_Vector_RAG(
                         collection_name="Google_2022", 
-                        embedding_function = VertexAIEmbeddings(model_name="textembedding-gecko@latest", 
-                        project=os.getenv("PROJECT_ID"))
                         )
 
 
@@ -50,7 +48,7 @@ def run_llm(query: str, chat_history: List[Dict[str, Any]] = []) -> Any:
     chat = ChatVertexAI(model_name="chat-bison-32k", max_output_tokens=1000, temperature=0)
 
     qa = ConversationalRetrievalChain.from_llm (
-        llm=chat, retriever=pgvector_retrieval.retriever,return_source_documents=False, verbose=True, combine_docs_chain_kwargs={"prompt": prompt}
+        llm=chat, retriever=pgvector_retrieval.retriever,return_source_documents=True, verbose=True, combine_docs_chain_kwargs={"prompt": prompt}
     )
 
 
@@ -61,9 +59,27 @@ def run_llm(query: str, chat_history: List[Dict[str, Any]] = []) -> Any:
 
 
     test = qa({"question": query, "chat_history": []})
+
+
+    v = [os.path.basename(doc.metadata["source"]) for doc in test["source_documents"]]
     
     return test["answer"]
 
 
+def extract_filename(path):
+  """Extracts the filename from a given path.
+
+  Args:
+    path: The path to extract the filename from.
+
+  Returns:
+    The filename.
+  """
+
+  return os.path.basename(path)
+
+
 if __name__ == "__main__":
-    print(run_llm(query="Calculate the percentage growth in Google revenue between 2021 and 2022?"))
+    #print(run_llm(query="Calculate the percentage growth in Google revenue between 2021 and 2022?"))
+
+    print (os.path.basename("tmp_2022-alphabet-annual-report_ffbe43c7-9b2a-4409-b87c-d9774d4b8634/json/2022-alphabet-annual-report.pdf_page66_table1.jsonl"))
