@@ -64,11 +64,11 @@ def run_llm(query: str, pgvector_retrieval:PG_Vector_RAG, chat_history: List[Dic
     #test = qa({"question": query, "chat_history": chat_history})
 
     # This is for RetrievalQA Note: this is dictionnary with query and not with question like ConversationalRetrievalChain
-    test = qa({"query": query})
+    val = qa.invoke({"query": query})
 
 
+    # for debugging purpose
+    print(val)
 
-    print(test)
-
-    return test
+    return val
     
